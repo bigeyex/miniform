@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">
+        <h:head>
+                <h:title>{$basket.name}</h:title>
+                <model>
+                        <itext>
+                                <translation lang="English">
+                                        <?php foreach($translation as $k=>$t): ?>
+                                        <text id="{$k}"><value>{$t}</value></text>
+                                        <?php endforeach; ?>
+                                        <text id="Yes"><value>Yes</value></text>
+                                        <text id="No"><value>No</value></text>
+                                </translation>
+                        </itext>
+                        <instance>
+                                <{$basket.uidname} id="{$basket.uidname}">
+                                        <DeviceId/>
+                                        <StartTime/>
+                                        <EndTime/>
+                                        <?php foreach($questions as $question): ?>
+                                        <{$question.uid}/>
+                                        <?php endforeach; ?>
+                                </{$basket.uidname}>
+                        </instance>
+                        <bind nodeset="/{$basket.uidname}/DeviceId" type="string" jr:preload="property" jr:preloadParams="deviceid"/>
+                        <bind nodeset="/{$basket.uidname}/StartTime" type="dateTime" jr:preload="timestamp" jr:preloadParams="start"/>
+                        <bind nodeset="/{$basket.uidname}/EndTime" type="dateTime" jr:preload="timestamp" jr:preloadParams="end"/>
+                        <?php foreach($questions as $question): ?>
+                        <?php if($question['type'] == 'photo'): ?>
+                        <bind nodeset="/{$basket.uidname}/{$question.uid}" type="binary"/>  
+                        <?php elseif($question['type'] == 'location'): ?>                
+                        <bind nodeset="/{$basket.uidname}/{$question.uid}" type="geopoint"/>
+                        <?php elseif($question['type'] == 'options'): ?>    
+                        <bind nodeset="/{$basket.uidname}/{$question.uid}" type="select" />
+                        <?php elseif($question['type'] == 'yesno'): ?>  
+                        <bind nodeset="/{$basket.uidname}/{$question.uid}" type="select1"/>
+                        <?php else: ?>  
+                        <bind nodeset="/{$basket.uidname}/{$question.uid}" type="string" />
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+                </model>
+        </h:head>
+        <h:body>
+                <?php foreach($questions as $question): ?>
+                <?php if($question['type'] == 'photo'): ?>
+                <upload ref="{$question.uid}" mediatype="image/*">
+                        <label ref="jr:itext('{$question.uid}')"/>
+                </upload>
+                <?php elseif($question['type'] == 'location'): ?> 
+                <input ref="{$question.uid}">
+                        <label ref="jr:itext('{$question.uid}')"/>
+                </input>
+                <?php elseif($question['type'] == 'options'): ?>  
+                <select ref="{$question.uid}">
+                        <label ref="jr:itext('{$question.uid}')"/>
+                        <?php 
+                            $options = explode("\n", $question['options']);
+                        ?>
+                        <?php foreach($options as $option): ?>
+                        <?php if(!empty($option)): ?>
+                        <item>
+                                <label ref="jr:itext('{$translation[$option]}')"/>
+                                <value>{$option}</value>
+                        </item>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+                </select>
+                <?php elseif($question['type'] == 'yesno'): ?>  
+                <select1 ref="{$question.uid}">
+                        <label ref="jr:itext('{$question.uid}')"/>
+                        <item>
+                                <label ref="jr:itext('Yes')"/>
+                                <value>Yes</value>
+                        </item>
+                        <item>
+                                <label ref="jr:itext('No')"/>
+                                <value>No</value>
+                        </item>
+                </select1>
+                <?php else: ?> 
+                <input ref="{$question.uid}">
+                        <label ref="jr:itext('{$question.uid}')"/>
+                </input>
+                <?php endif; ?>
+                <?php endforeach; ?>
+        </h:body>
+</h:html>

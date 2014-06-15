@@ -1,0 +1,33 @@
+<ion-view title="Mini Forms">
+  <ion-content class="has-header">
+    
+      <div class="list">
+          <div class="item item-divider">
+            Mini Forms
+          </div>
+          
+          <div ng-repeat="basket in baskets">
+              <a class="item" href="#/questions/{{ basket.id }}">
+                  {{ basket.name }}
+                <span class="badge badge-balanced">{{ $parent.reponse_count(basket.id) }}</span>
+              </a>
+          </div>
+          
+          <div class="item item-divider">
+            Settings
+          </div>
+          
+          <a class="item" ng-click="sync()">
+            <i class="icon ion-ios7-reload"></i>
+            Sync data ({{get_unsynced_number()}} Unsynced)
+          </a>
+          
+          <a class="item" href="#/enter-code">
+            <i class="icon ion-ios7-keypad"></i>
+            Re-enter survey code
+          </a>
+          
+      </div>
+    
+  </ion-content>
+</ion-view>

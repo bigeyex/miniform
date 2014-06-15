@@ -1,0 +1,56 @@
+<ion-view title="Questions">
+  <ion-content class="has-header">
+    
+      <div ng-repeat="question in questions">
+        <div class="list card">
+            <div class="item item-text-wrap">
+                {{$parent.questions.indexOf(question)+1}}. {{ question.name }}
+            </div>
+            <a ng-if="question.questionType=='photo'" class="item item-icon-left assertive" ng-click="get_picture(question)">
+                <i class="icon ion-ios7-camera"></i>
+                Take A Picture
+                <img ng-src="{{question.imageData}}"/>
+            </a>
+            <a ng-if="question.questionType=='location'" class="item item-icon-left assertive" ng-click="set_location(question)">
+                <i class="icon ion-ios7-location"></i>
+                Set Location
+                <p class="light" ng-if="question.msg!=undefined&&question.lngData===undefined">({{question.msg}})</p>
+                <p class="light" ng-if="question.lngData!==undefined">({{question.lngData}},{{question.latData}})</p>
+            </a>
+            <label ng-if="question.questionType=='text'" class="item item-input">
+                <input type="text" placeholder="Tap to input.." ng-model="question.textData">
+            </label>
+            <label ng-if="question.questionType=='number'" class="item item-input">
+                <input type="tel" placeholder="Tap to enter.." ng-model="question.numberData">
+            </label>
+            <label ng-if="question.questionType=='yesno'" class="item item-checkbox">
+                 <label class="checkbox">
+                   <input type="checkbox" ng-model="question.numberData">
+                 </label>
+                 Yes
+            </label>
+            <div ng-if="question.questionType=='options'" class="list">
+              <label class="item item-input item-select">
+                <div class="input-label">
+                    Choose:
+                </div>
+                <select ng-model="question.textData">
+                  <option ng-repeat="option in $parent.get_options(question)" value="{{ option }}">{{ option }}</option>
+                  
+                </select>
+              </label>
+            </div>
+
+        </div> 
+        
+      </div><!-- the repeater -->
+      <div class="padding">
+          <a class="button button-positive button-block" ng-click="submit_data()">
+            Submit
+          </a>
+      </div>
+      <div class="padding"> </div>
+      
+    
+  </ion-content>
+</ion-view>

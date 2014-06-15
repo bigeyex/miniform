@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mini Forms</title>
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <!-- bootstrap 3.0.2 -->
+        {:css('bootstrap.min')}
+        <!-- font Awesome -->
+        {:css('font-awesome.min')}
+        <!-- Ionicons -->
+        {:css('ionicons.min')}
+        <!-- Theme style -->
+        {:css('dataTables.bootstrap')}
+        {:css('AdminLTE')}
+        
+        {:css('base')}
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          {:js('html5shiv')}
+          {:js('respond.min')}
+        <![endif]-->
+        
+        <style>
+            .new-project-button{
+                padding: 10px;
+            }
+            .btn, .box-footer .btn, .box-body .btn{
+                margin-right: 5px;
+            }
+            .first.btn, .project-name .btn{
+                margin-left: 5px;
+            }
+            .box-header .form-inline{
+                margin-left: 10px;
+            }
+            .box .box-body{
+                padding-top:0;
+            }
+            .hide{
+                display: none;
+            }
+            .short-input{
+                width: 150px;
+            }
+            .rename-basket-button{
+                margin-top: 10px;
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body class="skin-blue">
+        <!-- header logo: style can be found in header.less -->
+        <header class="header">
+            <a href="index.html" class="logo">
+                <!-- Add the class icon to your logo image or logo icon to add the margining -->
+                Mini Forms
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-right">
+                    <ul class="nav navbar-nav">
+                        <!-- Messages: style can be found in dropdown.less-->
+                        
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        
+                        <!-- Tasks: style can be found in dropdown.less -->
+                        
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>{:user('fullname')} <i class="caret"></i></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header bg-light-blue">
+                                    <img src="{:link_for('img/default_user.jpg')}" class="img-circle" alt="User Image" />
+                                    <p>
+                                        {:user('fullname')}
+                                        <small>Welcome!</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-right">
+                                        <a href="{:U('logout')}" class="btn btn-default btn-flat">Sign out</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <div class="wrapper row-offcanvas row-offcanvas-left">
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="left-side sidebar-offcanvas">                
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar">
+                    <!-- Sidebar user panel -->
+                    <div class="user-panel">
+                        <div class="pull-left image">
+                            <img src="{:link_for('img/default_user.jpg')}" class="img-circle" alt="User Image" />
+                        </div>
+                        <div class="pull-left info">
+                            <p>{:user('fullname')}</p>
+
+                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                        </div>
+                    </div>
+                    <!-- search form -->
+                   
+                    <!-- /.search form -->
+                    <!-- sidebar menu: : style can be found in sidebar.less -->
+                    <div class="new-project-button">
+                        <a href="javascript:void(0);" class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">
+                            <i class="fa fa-plus"></i> <span> New Project</span>
+                        </a>
+                    </div>
+                    <ul class="sidebar-menu" id="project-pane" data-bind="foreach: projects">
+                        <?php foreach($projects as $project): ?>
+                        <li class="{:active_if($project['id']==$this_project['id'])}" data-bind="css: {active:is_current}">
+                            <a href="{:text_if($project['id']!=$this_project['id'], U('MiniForm/manage').'/id/'.$project['id'], 'javascript:void(0);')}">
+                                <i class="fa fa-cube"></i> <span data-bind="text: name">{$project.name}</span>
+                            </a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    
+                </section>
+                
+                <!-- /.sidebar -->
+            </aside>
+
+            <!-- Right side column. Contains the navbar and content of the page -->
+            <aside class="right-side">                
+                <!-- Content Header (Page header) -->
+                <section class="content-header" id="project-info-section">
+                    <h1 class="project-name">
+                        {$this_basket.name} (View Data)
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li class="active">{$this_project.name}</li>
+                        <li class="active">{$this_basket.name}</li>
+                    </ol>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+                    
+                    
+                    <div class="box">
+                                <div class="box-header">
+                                                                      
+                                </div><!-- /.box-header -->
+                                <div class="box-body table-responsive">
+                                    <div id="example2_wrapper" class="dataTables_wrapper form-inline" role="grid"><div class="row"><div class="col-xs-6"></div><div class="col-xs-6"></div></div>
+                                        
+                                    <table id="example2" class="table table-bordered table-hover dataTable" aria-describedby="example2_info">
+                                        <thead>
+                                            <tr role="row">
+                                            <?php foreach($questions as $question): ?>
+                                                <th class="sorting" role="columnheader" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="{$question.name}: activate to sort column ascending">{$question.name}</th>
+                                            <?php endforeach; ?>
+                                            </tr>
+                                        </thead>
+                                        <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                            <?php $odd='odd'; ?>
+                                            <?php foreach($responses as $response): ?>
+                                            <tr class="{$odd}">
+                                                <?php foreach($questions as $question): ?>
+<?php  
+    $answer = $response['ask_answer'][$question['id']];
+    switch($question['questionType']){
+        case 'text':
+        case 'options':
+        case 'yesno':
+            $anshtml = $answer['textData'];
+            break;
+        case 'number':
+            $anshtml = $answer['numberData'];
+            break;
+        case 'location':
+            $anshtml = '('.$answer['latData'].','.$answer['lngData'].')';
+            break;
+        case 'photo':
+            $anshtml = '<img src="'.$answer['imageData'].'" alt="image"/>';
+            break;
+    }
+?>
+                                                <td class="">{$anshtml}</td>
+                                                <?php endforeach; ?>
+                                            </tr>
+                                            <?php 
+                                                if($odd=='odd'){
+                                                    $odd='even';
+                                                }else{
+                                                    $odd='odd';
+                                                }
+                                            ?>
+                                            <?php endforeach; ?>    
+                                        </tbody>
+                                    </table>
+                                </div><!-- /.box-body -->
+                            </div>
+                    
+                    
+                </section><!-- /.content -->
+            </aside><!-- /.right-side -->
+        </div><!-- ./wrapper -->
+        
+
+        
+        <div id="modal-new-project" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h4 class="modal-title">Create New Project</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="POST" action="{:U('MiniForm/new_project')}">
+                        <div class="form-group">
+                            <label for="new-project-name">Name:</label>
+                            <input name="name" type="text" class="form-control" id="new-project-name" placeholder="Name of the new project"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Create Project"/>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+        
+
+
+        <!-- jQuery 2.0.2 -->
+        {:js('jquery-1.11.1.min')}
+        <!-- Bootstrap -->
+        {:js('bootstrap.min')}
+        <!-- AdminLTE App -->
+        {:js('jquery.dataTables')}
+        {:js('dataTables.bootstrap')}
+        {:js('admin-lte-app')}
+        {:js('knockout-3.1.0')}
+        
+        <script>
+        
+        app_path = '__APP__';
+        
+        
+        // jquery confirm delete
+        $(function(){
+            $('.parent-hover-control').hide();
+            $('.parent-hover-control').parent().hover(function(){
+                $(this).find('.parent-hover-control').show();
+            }, function(){
+                $(this).find('.parent-hover-control').hide();
+            });
+        });
+        
+        $(function() {
+//                $("#example1").dataTable();
+                $('#example2').dataTable({
+                    "bPaginate": true,
+                    "bLengthChange": false,
+                    "bFilter": false,
+                    "bSort": true,
+                    "bInfo": true,
+                    "bAutoWidth": false
+                });
+            });
+        
+        function confirm_button(event){
+            var self = event.currentTarget;
+            $(self).hide();
+            $(self).next().removeClass('hide').show();
+            var timeout = window.setTimeout(function(){
+                $(self).show();
+                $(self).next().hide();
+            }, '2000');
+        }
+        </script>
+    </body>
+</html>

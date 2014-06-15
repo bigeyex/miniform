@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mini Forms</title>
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <!-- bootstrap 3.0.2 -->
+        {:css('bootstrap.min')}
+        <!-- font Awesome -->
+        {:css('font-awesome.min')}
+        <!-- Ionicons -->
+        {:css('ionicons.min')}
+        <!-- Theme style -->
+        {:css('AdminLTE')}
+        
+        {:css('base')}
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          {:js('html5shiv')}
+          {:js('respond.min')}
+        <![endif]-->
+        
+        <style>
+            .new-project-button{
+                padding: 10px;
+            }
+            .btn, .box-footer .btn, .box-body .btn{
+                margin-right: 5px;
+            }
+            .first.btn, .project-name .btn{
+                margin-left: 5px;
+            }
+            .box-header .form-inline{
+                margin-left: 10px;
+            }
+            .box .box-body{
+                padding-top:0;
+            }
+            .hide{
+                display: none;
+            }
+            .short-input{
+                width: 150px;
+            }
+            .rename-basket-button{
+                margin-top: 10px;
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body class="skin-blue">
+        <!-- header logo: style can be found in header.less -->
+        <header class="header">
+            <a href="index.html" class="logo">
+                <!-- Add the class icon to your logo image or logo icon to add the margining -->
+                Mini Forms
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-right">
+                    <ul class="nav navbar-nav">
+                        <!-- Messages: style can be found in dropdown.less-->
+                        
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        
+                        <!-- Tasks: style can be found in dropdown.less -->
+                        
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>{:user('fullname')} <i class="caret"></i></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header bg-light-blue">
+                                    <img src="{:link_for('img/default_user.jpg')}" class="img-circle" alt="User Image" />
+                                    <p>
+                                        {:user('fullname')}
+                                        <small>Welcome!</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-right">
+                                        <a href="{:U('logout')}" class="btn btn-default btn-flat">Sign out</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <div class="wrapper row-offcanvas row-offcanvas-left">
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="left-side sidebar-offcanvas">                
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar">
+                    <!-- Sidebar user panel -->
+                    <div class="user-panel">
+                        <div class="pull-left image">
+                            <img src="{:link_for('img/default_user.jpg')}" class="img-circle" alt="User Image" />
+                        </div>
+                        <div class="pull-left info">
+                            <p>{:user('fullname')}</p>
+
+                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                        </div>
+                    </div>
+                    <!-- search form -->
+                   
+                    <!-- /.search form -->
+                    <!-- sidebar menu: : style can be found in sidebar.less -->
+                    <div class="new-project-button">
+                        <a href="javascript:void(0);" class="btn btn-default" data-toggle="modal" data-target="#modal-new-project">
+                            <i class="fa fa-plus"></i> <span> New Project</span>
+                        </a>
+                    </div>
+                    <ul class="sidebar-menu" id="project-pane" data-bind="foreach: projects">
+                        <?php foreach($projects as $project): ?>
+                        <li class="{:active_if($project['id']==$this_project['id'])}" data-bind="css: {active:is_current}">
+                            <a href="{:text_if($project['id']!=$this_project['id'], U('MiniForm/manage').'/id/'.$project['id'], 'javascript:void(0);')}">
+                                <i class="fa fa-cube"></i> <span data-bind="text: name">{$project.name}</span>
+                            </a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    
+                </section>
+                
+                <!-- /.sidebar -->
+            </aside>
+
+            <!-- Right side column. Contains the navbar and content of the page -->
+            <aside class="right-side">                
+                <!-- Content Header (Page header) -->
+                <section class="content-header" id="project-info-section">
+                    <h1 class="project-name" data-bind="ifnot: in_edit">
+                        <span class="project-name-span" data-bind="text: name"></span>
+                        (Code: <span data-bind="text: code"></span>)
+                        <a href="javascript:void(0);" class="btn btn-default btn-xs parent-hover-control" data-bind="click: edit">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </h1>
+                    <h1 class="project-name in-edit" data-bind="if: in_edit">
+                        <div class="form-inline">
+                        <input type="text" class="form-control short-input input-sm" data-bind="value: new_name"/>
+                        <a href="javascript:void(0);" class="btn btn-success btn-sm" data-bind="click: save">Save</a>
+                        <a href="javascript:void(0);" class="btn btn-default btn-sm" data-bind="click: discard_change">Cancel</a>
+                        </div>
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li class="active">{$this_project.name}</li>
+                    </ol>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+                    <div id="project-view" data-bind="foreach: baskets">
+                        <div class="box box-info">
+                            <div class="box-header" data-bind="ifnot: in_edit">
+                                <h3 class="box-title" data-bind="text: name"></h3>
+                                <a href="javascript:void(0);" class="btn btn-default btn-xs rename-basket-button parent-hover-control" data-bind="click: rename">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </div>
+                            <div class="box-header" data-bind="if: in_edit">
+                                <div class="form-inline">
+                                <input type="text" class="form-control short-input input-sm" data-bind="value: new_name"/>
+                                <a href="javascript:void(0);" class="btn btn-success btn-sm first" data-bind="click: save">Save</a>
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm" data-bind="click: $parent.basket_discard_change">Cancel</a>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <table class="table">
+                                    <tbody data-bind="foreach: questions">
+                                    <tr data-bind="ifnot: in_edit">
+                                        <td data-bind="text: name"></td>
+                                        <td width="100"><code data-bind="text: type"></code></td>
+                                        <td width="200">
+                                            <a href="javascript:void(0);" class="btn btn-default btn-xs" data-bind="click: edit">Edit</a>
+                                            <a href="javascript:void(0);" class="btn btn-default btn-xs need-confirm" onclick="confirm_button(event)">Delete</a>
+                                            <a href="javascript:void(0);" class="btn btn-danger hide btn-xs" data-bind="click: $parent.delete_question">Confirm Delete</a>
+                                            <a href="javascript:void(0);" class="btn btn-default btn-xs" data-bind="click: edit_options, visible: type()=='options'">Options</a>
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="if: in_edit">
+                                        <td><input type="text" class="form-control input-sm" data-bind="value: new_name" placeholder="Title of the Question"></td>
+                                        <td width="100">
+                                            <select class="form-control input-sm" data-bind="value: new_type">
+                                                <option value="text">Text</option>
+                                                <option value="number">Number</option>
+                                                <option value="options">Options</option>
+                                                <option value="yesno">Yes/No</option>
+                                                <option value="photo">Photo</option>
+                                                <option value="location">Location</option>
+                                            </select>
+                                        </td>
+                                        <td width="200">
+                                            <a href="javascript:void(0);" class="btn btn-success btn-xs" data-bind="click: save">Save</a>
+                                            <a href="javascript:void(0);" class="btn btn-default btn-xs" data-bind="click: $parent.question_discard_change">Cancel</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- /.box-body -->
+                            <div class="box-footer">
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm" data-bind="click: new_question, attr: {disabled: id()==0}">Add Question</a>
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm" data-bind="attr: {disabled: id()==0, href:view_data_url}">View Data</a>
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm" data-bind="attr: {disabled: id()==0, href:odk_xform_url}">Download ODK XForm</a>
+                                <a href="javascript:void(0);" class="btn btn-default btn-sm need-confirm" onclick="confirm_button(event)" data-bind="attr: {disabled: id()==0}">Delete Mini Form</a>
+                                <a href="javascript:void(0);" class="btn btn-danger hide btn-sm" data-bind="click: $parent.delete_basket">Confirm Delete</a>
+                            </div><!-- /.box-footer-->
+                        </div>
+                    </div>
+                    <a href="javascript:void(0);" class="btn btn-default" onclick="designModel.new_basket();">Add Mini Form</a>
+                    <a href="javascript:void(0);" class="btn btn-default need-confirm" onclick="confirm_button(event)">Delete Project</a>
+                    <a href="javascript:void(0);" class="btn btn-danger hide delete-project" >Confirm Delete</a>
+
+                </section><!-- /.content -->
+            </aside><!-- /.right-side -->
+        </div><!-- ./wrapper -->
+        
+
+        
+        <div id="modal-new-project" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h4 class="modal-title">Create New Project</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" method="POST" action="{:U('MiniForm/new_project')}">
+                        <div class="form-group">
+                            <label for="new-project-name">Name:</label>
+                            <input name="name" type="text" class="form-control" id="new-project-name" placeholder="Name of the new project"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Create Project"/>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+        
+        <div id="modal-edit-option" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h4 class="modal-title">Edit Option (<span id="question-name"></span>)</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new-project-name">Enter options here (each line for one option)</label><br/>
+                        <textarea cols="60" rows="10" id="option-content"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="button" class="btn btn-primary save-options" id="save-options-button" value="Save Options"/>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- jQuery 2.0.2 -->
+        {:js('jquery-1.11.1.min')}
+        <!-- Bootstrap -->
+        {:js('bootstrap.min')}
+        <!-- AdminLTE App -->
+        {:js('admin-lte-app')}
+        {:js('knockout-3.1.0')}
+        
+        <script>
+        
+        app_path = '__APP__';
+        baskets = {$baskets};
+        project_info = {$project_info};
+        
+        
+        // jquery confirm delete
+        $(function(){
+            $('.parent-hover-control').hide();
+            $('.parent-hover-control').parent().hover(function(){
+                $(this).find('.parent-hover-control').show();
+            }, function(){
+                $(this).find('.parent-hover-control').hide();
+            });
+        });
+        
+        function confirm_button(event){
+            var self = event.currentTarget;
+            $(self).hide();
+            $(self).next().removeClass('hide').show();
+            var timeout = window.setTimeout(function(){
+                $(self).show();
+                $(self).next().hide();
+            }, '2000');
+        }
+
+        function Question(id, name, type, basket_id, options){
+            this.id = id;
+            this.name = ko.observable(name);
+            this.type = ko.observable(type);
+            this.in_edit = ko.observable(false);
+            this.new_name = ko.observable(name);
+            this.new_type = ko.observable(type);
+            this.options = options;
+            this.basket_id = basket_id;
+                        
+            var self = this;
+            this.edit = function (){
+                self.in_edit(true);
+                self.new_name(self.name());
+                self.new_type(self.type());
+            }
+            
+            this.edit_options = function(){
+                $('#question-name').text(self.name());
+                $('#modal-edit-option').modal();
+                $('#option-content').val(self.options);
+                $('#save-options-button').off('click');
+                $('#save-options-button').click(function(){
+                    var new_options = $('#option-content').val();
+                    $.post(app_path+'/MiniForm/save_options', {'id':self.id, 'options':new_options}, function(result){
+                        if(result == 'ok'){
+                            // TODO: change it to data binding
+                            self.options = new_options;
+                            $('#modal-edit-option').modal('hide');
+                        }
+                    });
+                });
+            }
+            
+            this.save = function(){
+                var target_ui = event.currentTarget;
+                $(target_ui).addClass('loading');
+                if(self.id == 0){
+                    $.post(app_path+'/MiniForm/add_question', {'basket_id':self.basket_id, 'name':self.new_name(), 'type':self.new_type()}, function(result){
+                        if(!isNaN(result)){
+                            self.name(self.new_name());
+                            self.type(self.new_type());
+                            self.in_edit(false);
+                        }
+                    });
+                }
+                else{
+                    $.post(app_path+'/MiniForm/save_question', {'id': self.id,'name': self.new_name(),'type':self.new_type()}, function(result){
+                        if(!isNaN(result)){
+                            self.name(self.new_name());
+                            self.type(self.new_type());
+                            self.in_edit(false);
+                        }
+                    });
+                }
+                
+            }
+            
+            this.discard_change = function(){
+                self.in_edit(false);
+            }
+        }
+
+        function Basket(id, name, response, questions){
+            this.id = ko.observable(id);
+            this.name = ko.observable(name);
+            this.response = response;
+            this.questions = ko.observableArray();
+            this.new_name = ko.observable('');
+            this.in_edit = ko.observable(false);
+            this.view_data_url = ko.computed(function(){
+                return app_path+'/MiniForm/view_data/id/'+this.id();
+            }, this);
+            this.odk_xform_url = ko.computed(function(){
+                return app_path+'/MiniForm/odk_xform/id/'+this.id();
+            }, this);
+            
+            for(var i in questions){
+                this.questions.push(questions[i]);
+            }
+            
+            var self = this;
+            
+            this.new_question = function(){
+                var target_ui = event.currentTarget;
+                var question = new Question(0, '', 'Text', self.id());
+                question.edit();
+                self.questions.push(question);  
+                 
+            }
+            
+            this.question_discard_change = function(question){
+                if(question.id == 0){
+                    self.questions.remove(question);
+                }
+                else{
+                    question.discard_change();
+                }
+            }
+            
+            this.rename = function(){
+                self.new_name(self.name());
+                self.in_edit(true);
+            }
+            
+            this.save = function(){
+                var target_ui = event.currentTarget;
+                $(target_ui).addClass('loading');
+                if(self.id() == 0){
+                    $.post(app_path+'/MiniForm/new_basket', {'name': self.new_name(), 'project_id': project_info.id}, function(result){
+                        if(!isNaN(result)){
+                            self.id(result);
+                            self.name(self.new_name());
+                            self.in_edit(false);
+                        }
+                    });
+                }
+                else{
+                    $.post(app_path+'/MiniForm/rename_basket', {'id': self.id(),'name': self.new_name()}, function(result){
+                        if(result == 'ok'){
+                            self.name(self.new_name());
+                            self.in_edit(false);
+                        }
+                    });
+                }
+                
+            }
+            
+            this.discard_change = function(){
+                self.in_edit(false);
+            }
+            
+            this.delete_question = function(question_to_be_deleted){
+                var target_ui = event.currentTarget;
+                $(target_ui).addClass('loading');
+                $.post(app_path+'/MiniForm/delete_question', {'id': question_to_be_deleted.id}, function(result){
+                    if(result == 'ok'){
+                        self.questions.remove(question_to_be_deleted);
+                    }
+                });
+            }
+
+        }
+
+        function DesignModel(){
+            this.baskets = ko.observableArray();
+            
+            // build model / update baskets from backend
+            for(var i in baskets){
+                var basket_info = baskets[i];
+                var question_list = [];
+                for(var j in basket_info.ask_question){
+                    var question_info = basket_info.ask_question[j];
+                    question_list.push(new Question(question_info.id, question_info.name, question_info.questionType, question_info.basket_id, question_info.options));
+                }
+                this.baskets.push(new Basket(basket_info.id, basket_info.name, basket_info.response, question_list));
+            };
+            
+            var self = this;
+            this.new_basket = function(){
+                var basket = new Basket(0, '', []);
+                basket.in_edit(true);
+                self.baskets.push(basket);
+                
+            };
+            
+            this.delete_basket = function(basket_to_be_deleted){
+                var target_ui = event.currentTarget;
+                $(target_ui).addClass('loading');
+                $.post(app_path+'/MiniForm/delete_basket', {id:basket_to_be_deleted.id()} ,function(result){
+                    self.baskets.remove(basket_to_be_deleted);
+                });
+            }
+            
+            this.basket_discard_change = function(basket){
+                if(basket.id() == 0){
+                    self.baskets.remove(basket);
+                }
+                else{
+                    basket.discard_change();
+                }
+            }
+            
+        }
+
+        designModel = new DesignModel();
+        ko.applyBindings(designModel, document.getElementById('project-view'));
+
+        function ProjectInfoModel(){
+            this.id = project_info.id;
+            this.name = ko.observable(project_info.name);
+            this.code = ko.observable(project_info.code);
+            this.in_edit = ko.observable(false);
+            this.new_name = ko.observable('');
+            
+            var self = this;
+            this.edit = function(){
+                self.in_edit(true);
+                self.new_name(self.name());
+            };
+            
+            this.save = function(){
+                var target_ui = event.currentTarget;
+                $(target_ui).addClass('loading');
+                $.post(app_path+'/MiniForm/rename_project', {'id': this.id,'name': this.new_name()}, function(result){
+                    if(result == 'ok'){
+                        self.name(self.new_name());
+                        self.in_edit(false);
+                    }
+                });
+            };
+            
+            this.discard_change = function(){
+                self.in_edit(false);
+            };
+        }
+        
+        projectInfoModel = new ProjectInfoModel();
+        ko.applyBindings(projectInfoModel, document.getElementById('project-info-section'));
+        
+        
+        </script>
+    </body>
+</html>
