@@ -64,16 +64,17 @@ angular.module('starter.services', [])
                         'baskets':self.baskets,
                         'questions':self.questions,
                     })
-//                    if(localStorage['local_responses'] !== undefined){
-//                        self.responses = JSON.parse(localStorage['local_responses']);
-//                    }
+                    if(localStorage['local_responses'] !== undefined){
+                        self.responses = JSON.parse(localStorage['local_responses']);
+                    }
                     $rootScope.$broadcast('project.update');
                 }
                 else{
-                    this.error_message = 'Wrong code';
+                    $rootScope.$broadcast('entercode.wrong');
                 }
             }).error(function(){
                 self._load_local_storage();
+                $rootScope.$broadcast('entercode.nonetwork');
             });
             if(localStorage['response_count'] !== undefined){
                 self.response_count = JSON.parse(localStorage['response_count']);
@@ -94,10 +95,10 @@ angular.module('starter.services', [])
                     self.response_count[basket_id]++;
                 }
             }
-            console.log(self.responses);
             $http.post(self.base_url+'/save_responses', {data: self.responses, user_name: self.user_name}).success(function(result){
                 if(result.ret == 'ok'){
                     self.responses = [];
+                    localStorage['local_responses'] = [];
                 }
                 $rootScope.$broadcast('sync.complete');
             }).error(function(){

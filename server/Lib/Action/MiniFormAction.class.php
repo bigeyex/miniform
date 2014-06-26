@@ -324,7 +324,7 @@ class MiniFormAction extends Action {
     private function need_login(){
         if(!user()){
             flash('Please Log In First');
-            $this->redirect('Miniform/index');
+            $this->redirect('MiniForm/index');
             die();
         }
     }

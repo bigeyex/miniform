@@ -9,6 +9,12 @@ angular.module('starter.controllers', [])
             if($location.path() != '/enter-code') return;
              $state.transitionTo('miniforms');
         });
+        $scope.$on('entercode.wrong', function(){
+            $scope.error_msg = "Wrong Code";
+        });
+        $scope.$on('entercode.nonetwork', function(){
+            $scope.error_msg = "No Network Connection";
+        });
     }
 })
 
@@ -35,6 +41,7 @@ angular.module('starter.controllers', [])
     };
     $scope.$on('sync.complete', function(){
         $scope.syncing = false;
+        $scope.sync_msg = 'sync complete';
     });
     $scope.$on('sync.error', function(){
         $scope.sync_msg = 'No Network Connection';

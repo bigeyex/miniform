@@ -18,15 +18,15 @@
           </div>
           
           <a class="item" ng-click="sync()">
-            <i class="icon ion-ios7-reload"></i>
+            <i class="icon ion-ios7-{{syncing?'reloading':'reload'}}"></i>
             Sync data ({{get_unsynced_number()}} Unsynced)
+            <p>{{ sync_msg }}</p>
           </a>
           
           <a class="item" href="#/enter-code">
             <i class="icon ion-ios7-keypad"></i>
             Re-enter survey code
           </a>
-          
       </div>
     
   </ion-content>
